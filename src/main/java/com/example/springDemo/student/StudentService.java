@@ -2,10 +2,8 @@ package com.example.springDemo.student;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -18,6 +16,18 @@ public class StudentService {
         return studentRepository.findAll();
     }
     public void addNewStudent(Student student) {
-        System.out.println(student);
+        Optional<Student> studentOptional = studentRepository.findByEmail(student.getEmail());
+        if(studentOptional.isPresent()){
+            throw new IllegalStateException(" Email already taken! ");
+        }
+        studentRepository.save(student);
+    }
+
+    public void deleteStudent(Long id) {
+        Optional<Student> studentOptional = studentRepository.findById(id);
+        if(! studentOptional.isPresent()){
+            throw new IllegalStateException("No student with such id ");
+        }
+        studentRepository.deleteById(id);
     }
 }
